@@ -121,9 +121,9 @@ router.delete('/user/deleteMe', auth, async (req, res) => {
 //Update Avatar
 router.post('/user/me/uploadAvatar', auth, upload.single('avatar'), async (req, res) => {
     req.user.avatar = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
-
+    const user = req.user
     await req.user.save()
-    res.status(200).send()
+    res.send(user)
 }, (error, req, res, next) => {
     res.status(400).send('Please, upload a photo !')
 })
@@ -138,10 +138,10 @@ router.delete('/user/me/deleteAvatar', auth, async (req, res) => {
     }
 })
 //get avatar
-router.get('/user/me/getAvatar', auth,async (req, res) => {
+router.get('/user/me/getAvatar', auth, async (req, res) => {
     try {
 
-        if (!req.user.avatar){
+        if (!req.user.avatar) {
             throw new Error()
         }
         res.set('Content-Type', 'image/jpg')

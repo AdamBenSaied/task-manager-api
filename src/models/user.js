@@ -62,10 +62,8 @@ userSchema.methods.toJSON = function () {
     const userObject = user.toObject()
 
     delete userObject.password
-    delete userObject.tokens
     delete userObject._id
     delete userObject.__v
-    delete userObject.avatar
 
     return userObject
 
@@ -100,7 +98,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 }
 
 
-//Hash Password
+//Hash Password before every save
 userSchema.pre('save', async function (next) {
     const user = this
 
@@ -109,7 +107,7 @@ userSchema.pre('save', async function (next) {
     }
     next()
 })
-
+//Delete user's tasks before deleting the user
 userSchema.pre('deleteOne', {document: true, query: false}, async function (next) {
     const user = this
     await Task.deleteMany({owner: user._id})
